@@ -1,0 +1,21 @@
+{
+    "recordIDPrefix": "http://purl.org/au-research/grants/nhmrc/",
+    "data": {
+        "ID": "",
+        "Title": "",
+        "Name": "",
+        "Type": "",
+        "Existence_Start": "",
+        "Existence_End": "",
+        "Description": "",
+        "Primary_Investigator_ID": "",
+        "Investigators": "",
+        "Website": "",
+        "ANZSRC_FOR_1": "",
+        "ANZSRC_FOR_2": "",
+        "ANZSRC_FOR_3": ""
+    },
+    "metadata": {
+        "dc.identifier": "http://purl.org/au-research/grants/nhmrc/"
+    }
+}

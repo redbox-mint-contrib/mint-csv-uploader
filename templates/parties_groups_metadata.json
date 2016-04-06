@@ -1,0 +1,18 @@
+{
+  "recordIDPrefix": "redbox-mint.googlecode.com/parties_groups/",
+  "data": {
+      "ID": "",
+      "Name": "From API",
+      "Email": "",
+      "Phone": "",
+      "Parent_Group_ID": "",
+      "URI": "",
+      "NLA_Party_Identifier": "",
+      "Homepage": "",
+      "Description": "",
+      "rulesConfig": "Parties_Groups"
+  },
+  "metadata": {
+      "dc.identifier": "redbox-mint.googlecode.com/parties_groups/"
+  }
+}
