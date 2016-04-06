@@ -39,14 +39,20 @@ class MintApiWrapper {
     def idColumn = config.mapping[packageType].idColumn
     def idVal = data[idColumn]
     log.debug "Using ID Column: ${idColumn}, with value: ${idVal}"
-    if (existsPackage(config.mapping[packageType].idSearchField, idVal )) {
-      log.debug "Skipping processing, package already exists: ${idVal}"
-      return false
-    } 
-    def create = createPackage(packageType)
-    if (create.isSuccessful()) {
-      def createJson = slurper.parseText(create.body().string())  
-      create.body().close()
+    def existingOids = existsPackage(config.mapping[packageType].idSearchField, idVal )
+    def existingOid = null
+    def create = null
+    if (existingOids) {
+      existingOid = existingOids[0]
+    } else {
+      create = createPackage(packageType)
+      if (create.isSuccessful()) {
+        def createJson = slurper.parseText(create.body().string())  
+        create.body().close()  
+        existingOid = createJson.oid
+      }
+    }
+    if (existingOid) {
       // add attachments
       def attachments = config.mapping[packageType].attachments
       def attachTracker = [:]
@@ -65,7 +71,7 @@ class MintApiWrapper {
         if (scripts) {
           runScripts(scripts, attData, data)
         }
-        def attach = attachPayload(createJson.oid, attConf.name, JsonOutput.toJson(attData))  
+        def attach = attachPayload(existingOid, attConf.name, JsonOutput.toJson(attData))  
         attachTracker[att] = attach.isSuccessful()
         allAttached = allAttached && attach.isSuccessful()
       }
@@ -73,7 +79,7 @@ class MintApiWrapper {
         log.error "Some attachments failed, skipping record..."
         return false
       }
-      transform(createJson.oid, packageType)
+      transform(existingOid, packageType)
       return true
     }
     return false
@@ -103,7 +109,7 @@ class MintApiWrapper {
   
   def existsPackage(searchFld, searchVal) {
     def searchRes = findPackage(searchFld, searchVal)
-    return searchRes?.resultOids?.size() > 0
+    return searchRes?.resultOids?.size() > 0 ? searchRes?.resultOids : false
   }
   
   def findPackage(searchFld, searchVal) {
