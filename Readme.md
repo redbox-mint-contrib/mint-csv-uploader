@@ -37,8 +37,8 @@ This is a set of scripts that aims to provide a quick & simple API to allow csv 
 The Mint provides a facade to the API, providing a consistent user interface and auth paths. The Uploader provides a quick way to implement domain and/or institution specific functionality and validation in an agile manner. The Uploader should only be accessible to Mint, as there's no inbuilt security for now.
 
 #Endpoints
-GET `/api/<version>/mint/csv/ping` - returns the status of the uploader, validating the integration to Mint
-POST `/api/<version>/mint/csv/` - expects a Multipart form post, with one file and a 'packageType'
+- GET `/api/<version>/mint/csv/ping` - returns the status of the uploader, validating the integration to Mint
+- POST `/api/<version>/mint/csv/` - expects a Multipart form post, with one file and a 'packageType'
 
 #Deployment
 
