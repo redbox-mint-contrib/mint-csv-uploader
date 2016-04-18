@@ -99,9 +99,9 @@ class MintApiWrapper {
     log.debug "Running scripts..."
     GroovyShell shell = new GroovyShell()
     scripts.each {srcField, scriptConfig ->
-      def scriptPath = scriptConfig.scriptPath
+      def scriptPath = config.baseDir + scriptConfig.scriptPath
       log.debug "Running '${scriptPath}' for '${srcField}'"
-      def script = shell.parse(this.class.getResourceAsStream(scriptPath).text)
+      def script = shell.parse(new File(scriptPath).text)
       script.setBinding(new Binding([config:config, srcField:srcField, targetData:targetData, data:srcData[srcField], srcData:srcData, scriptArgs:scriptConfig.args, log:log]))
       script.run()
     }

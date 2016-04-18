@@ -15,4 +15,4 @@
 * Author: <a href='https://github.com/shilob'>Shilo Banihit</a>
 */
 
-targetData.metadata['dc.identifier'] = targetData.recordIDPrefix + srcData[srcField]
+targetData.metadata['dc.identifier'] = targetData.recordIDPrefix + data

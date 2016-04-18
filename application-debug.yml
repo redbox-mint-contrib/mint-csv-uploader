@@ -1,0 +1,6 @@
+spring.main.sources: au.com.redboxresearchdata.harvester.redbox.ReDBoxApiRouteBuilder
+---
+spring:
+  profiles: debug
+logging.level.org.springframework.web: DEBUG
+logging.level.au.com.redboxresearchdata.harvester.redbox: DEBUG
