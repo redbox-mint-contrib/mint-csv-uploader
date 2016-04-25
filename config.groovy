@@ -33,10 +33,10 @@ environments {
               'NLA_Party_Identifier': ['NLA_Party_Identifier'],
               'Homepage':['Homepage']
             ]
+            scripts = [
+              'ID': [scriptPath: 'scripts/dc_identifier.groovy']
+            ]
           }       
-          scripts = [
-            'ID': [scriptPath: 'scripts/dc_identifier.groovy']
-          ]
         }
         Parties_People {
           idColumn = 'ID'
@@ -70,10 +70,10 @@ environments {
               'Staff_Profile_Homepage': ['Staff_Profile_Homepage'],
               'Description': ['Description']
             ]
+            scripts = [
+              'ID': [scriptPath: 'scripts/dc_identifier.groovy']
+            ]
           }
-          scripts = [
-            'ID': [scriptPath: 'scripts/dc_identifier.groovy']
-          ]
         }
         Activities {
           idColumn = 'ID'
@@ -98,10 +98,10 @@ environments {
               "ANZSRC_FOR_2": ["ANZSRC_FOR_2"],
               "ANZSRC_FOR_3": ["ANZSRC_FOR_3"]
             ]
+            scripts = [
+              'ID': [scriptPath: 'scripts/dc_identifier.groovy']
+            ]
           }
-          scripts = [
-            'ID': [scriptPath: 'scripts/dc_identifier.groovy']
-          ]
         }
       }
       logging {
