@@ -217,7 +217,10 @@ class MintApiWrapper {
       parsedData.files[0].file.withReader {
         def line = it.readLine()
         def colHeaders = []
-        colHeaders.addAll(line.split(','))
+        def tempHdrs = line.split(',')
+        tempHdrs.each {
+          colHeaders <<  it.replace("\"", '').trim()
+        }
         if (!colHeaders?.containsAll(fieldValidation)) {
           exchange.in.getHeader('resp').success = false
           exchange.in.getHeader('resp').message = 'The required columns not found on the file, please check if the package type matches your file format.' 
