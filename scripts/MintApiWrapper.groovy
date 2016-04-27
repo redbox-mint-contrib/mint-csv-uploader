@@ -7,6 +7,7 @@ import groovy.util.*
 import groovy.json.*
 import java.security.*  
 import groovy.json.*
+import java.util.concurrent.*
 /**
 *
 * Creates Mint Packages from CSV records. Provides domain specific implementation and validation of the packages.
@@ -18,6 +19,18 @@ class MintApiWrapper {
   def log 
   MediaType MEDIA_TYPE_TEXT = MediaType.parse("text/plain");
   JsonSlurper slurper = new JsonSlurper()
+  
+  def client
+  
+  def getClient() {
+    if (!client) {
+       client = new OkHttpClient.Builder()
+      .readTimeout(60, TimeUnit.MINUTES)
+      .addInterceptor(new LoggingInterceptor(log:log))
+      .build()
+    }
+    return client
+  }
   
   def ping() {
     Request request = new Request.Builder()
@@ -48,9 +61,9 @@ class MintApiWrapper {
       create = createPackage(packageType)
       if (create.isSuccessful()) {
         def createJson = slurper.parseText(create.body().string())  
-        create.body().close()  
         existingOid = createJson.oid
       }
+      create.body().close()  
     }
     if (existingOid) {
       // add attachments
@@ -74,6 +87,7 @@ class MintApiWrapper {
         def attach = attachPayload(existingOid, attConf.name, JsonOutput.toJson(attData))  
         attachTracker[att] = attach.isSuccessful()
         allAttached = allAttached && attach.isSuccessful()
+        attach.body().close()
       }
       if (!allAttached) {
         log.error "Some attachments failed, skipping record..."
@@ -123,6 +137,7 @@ class MintApiWrapper {
       res.body().close()
       return resJson
     }
+    res.body().close()
     return null
   }
   
@@ -158,9 +173,7 @@ class MintApiWrapper {
   }
   
   def execRequest(request) {
-    OkHttpClient client = new OkHttpClient.Builder()
-    .addInterceptor(new LoggingInterceptor(log:log))
-    .build()
+    client = getClient()
     Response response = client.newCall(request).execute();
     if (!response.isSuccessful()) {
       log.error "Error in request: ${response.code}"
@@ -263,17 +276,17 @@ class LoggingInterceptor implements Interceptor {
     long t1 = System.nanoTime();
     log.info(String.format("Sending request %s on %s%n%s",
         request.url(), chain.connection(), request.headers()));
-    if (request.body()) {
-      log.debug "Body contents:"
-      if (request.body() instanceof MultipartBody) {
-        for (part in request.body().parts()) {
-          log.debug part.toString()
-        } 
-      } else {
-        log.debug request.body().string()  
-        request.body().close()
-      }
-    }
+//    if (request.body()) {
+//      log.debug "Body contents:"
+//      if (request.body() instanceof MultipartBody) {
+//        for (part in request.body().parts()) {
+//          log.debug part.toString()
+//        } 
+//      } else {
+//        log.debug request.body().string()  
+//        request.body().close()
+//      }
+//    }
 
     Response response = chain.proceed(request);
 

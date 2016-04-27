@@ -30,6 +30,7 @@ routeBuilder.restConfiguration()
 .bindingMode(RestBindingMode.off)
 .componentProperty('traceEnabled', config.logging.trace.toString())
 .componentProperty('mapHeaders', 'false')
+.componentProperty('keepAlive', 'true')
 .enableCORS(true)
 
 // REST endpoints definition
