@@ -44,57 +44,61 @@ class MintApiWrapper {
   }
   
   def createRecord(data, packageType) {
-    log.debug "Package Type: ${packageType}"
-    if (!config.mapping[packageType]) {
-      log.error "No mapping for package type: '${packageType}', please check your configuration."
-      return false
-    }
-    def idColumn = config.mapping[packageType].idColumn
-    def idVal = data[idColumn]
-    log.debug "Using ID Column: ${idColumn}, with value: ${idVal}"
-    def existingOids = existsPackage(config.mapping[packageType].idSearchField, idVal )
-    def existingOid = null
-    def create = null
-    if (existingOids) {
-      existingOid = existingOids[0]
-    } else {
-      create = createPackage(packageType)
-      if (create.isSuccessful()) {
-        def createJson = slurper.parseText(create.body().string())  
-        existingOid = createJson.oid
-      }
-      create.body().close()  
-    }
-    if (existingOid) {
-      // add attachments
-      def attachments = config.mapping[packageType].attachments
-      def attachTracker = [:]
-      def allAttached = true
-      attachments.each {att->
-        def attConf = config.mapping[packageType][att]
-        def template = new File(config.baseDir + attConf.template).text
-        log.debug "Att: '${att}', Using template content:"
-        log.debug template
-        def attData = slurper.parseText(template)
-        def attMapping = attConf.mapping
-        if (attMapping) {
-          mapFields(attMapping, attData, data)
-        }
-        def scripts = attConf.scripts
-        if (scripts) {
-          runScripts(scripts, attData, data)
-        }
-        def attach = attachPayload(existingOid, attConf.name, JsonOutput.toJson(attData))  
-        attachTracker[att] = attach.isSuccessful()
-        allAttached = allAttached && attach.isSuccessful()
-        attach.body().close()
-      }
-      if (!allAttached) {
-        log.error "Some attachments failed, skipping record..."
+    try {
+      log.debug "Package Type: ${packageType}"
+      if (!config.mapping[packageType]) {
+        log.error "No mapping for package type: '${packageType}', please check your configuration."
         return false
       }
-      transform(existingOid, packageType)
-      return true
+      def idColumn = config.mapping[packageType].idColumn
+      def idVal = data[idColumn]
+      log.info "Using ID Column: ${idColumn}, with value: ${idVal}"
+      def existingOids = existsPackage(config.mapping[packageType].idSearchField, idVal )
+      def existingOid = null
+      def create = null
+      if (existingOids) {
+        existingOid = existingOids[0]
+      } else {
+        create = createPackage(packageType)
+        if (create.isSuccessful()) {
+          def createJson = slurper.parseText(create.body().string())  
+          existingOid = createJson.oid
+        }
+        create.body().close()  
+      }
+      if (existingOid) {
+        // add attachments
+        def attachments = config.mapping[packageType].attachments
+        def attachTracker = [:]
+        def allAttached = true
+        attachments.each {att->
+          def attConf = config.mapping[packageType][att]
+          def template = new File(config.baseDir + attConf.template).text
+          log.debug "Att: '${att}', Using template content:"
+          log.debug template
+          def attData = slurper.parseText(template)
+          def attMapping = attConf.mapping
+          if (attMapping) {
+            mapFields(attMapping, attData, data)
+          }
+          def scripts = attConf.scripts
+          if (scripts) {
+            runScripts(scripts, attData, data)
+          }
+          def attach = attachPayload(existingOid, attConf.name, JsonOutput.toJson(attData))  
+          attachTracker[att] = attach.isSuccessful()
+          allAttached = allAttached && attach.isSuccessful()
+          attach.body().close()
+        }
+        if (!allAttached) {
+          log.error "Some attachments failed, skipping record..."
+          return false
+        }
+        transform(existingOid, packageType)
+        return true
+      }
+    } catch (Exception e) {
+      log.error e
     }
     return false
   }
@@ -237,6 +241,10 @@ class MintApiWrapper {
         if (!colHeaders?.containsAll(fieldValidation)) {
           exchange.in.getHeader('resp').success = false
           exchange.in.getHeader('resp').message = 'The required columns not found on the file, please check if the package type matches your file format.' 
+          log.info "Expecting: "
+          log.info fieldValidation.toString()
+          log.info "Received: "
+          log.info colHeaders.toString()
         }
       }  
     } else {

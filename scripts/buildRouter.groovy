@@ -38,6 +38,18 @@ routeBuilder.rest("/api/${config.version}/")
 .post("/mint/csv").consumes("multipart/form-data").produces('application/json').to("direct:uploadfile")
 .get('/mint/csv/ping').to('direct:ping')
 
+routeBuilder.onException(Exception.class)
+.process(new Processor() {
+  public void process(Exchange exchange) throws Exception {
+    def exception = (Exception) exchange.getProperty(Exchange.EXCEPTION_CAUGHT)
+    exception.printStackTrace()
+    exchange.in.getHeader('resp').success = false
+    exchange.in.getHeader('resp').message = exception.getMessage()
+  }
+})
+.handled(true)
+.to('direct:respond')
+
 // Channel Definitions
 routeBuilder.from("direct:uploadfile").transform { exchange ->
   def parsedData = parser.parseAndSave(exchange)
@@ -73,6 +85,8 @@ routeBuilder.from('direct:respond')
 .removeHeader('resp')
 .removeHeader('file')
 .removeHeader('erroredRecIds')
+
+
 
 routeBuilder.from('direct:ping').transform { exchange ->
   exchange.in.body = apiWrapper.ping()

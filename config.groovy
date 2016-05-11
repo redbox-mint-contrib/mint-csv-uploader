@@ -15,15 +15,15 @@ environments {
       }
       mapping {
         Parties_Groups {
-          idColumn = 'ID' // value used for searching
+          idColumn = 'id' // value used for searching
           idSearchField = 'ID' // the Solr field search query
-          fieldValidation = ['ID', 'Name', 'Phone'] // used to validate if the record is valid for this package type, all attributes must exist 
+          fieldValidation = ['id', 'Name', 'Phone'] // used to validate if the record is valid for this package type, all attributes must exist 
           attachments = ['metadata'] // attachments created for each record
           metadata {
             template = 'templates/parties_groups_metadata.json'
             name = 'metadata.json'
             mapping = [
-              'ID':['ID'],
+              'id':['ID'],
               'Name':['Name'], 
               'Description':['Description'],
               'Email':['Email'],
@@ -34,20 +34,20 @@ environments {
               'Homepage':['Homepage']
             ]
             scripts = [
-              'ID': [scriptPath: 'scripts/dc_identifier.groovy']
+              'id': [scriptPath: 'scripts/dc_identifier.groovy']
             ]
           }       
         }
         Parties_People {
-          idColumn = 'ID'
+          idColumn = 'id'
           idSearchField = 'ID'
-          fieldValidation = ['ID', 'Given_Name', 'Other_Names', 'Family_Name', 'Email']
+          fieldValidation = ['id', 'Given_Name', 'Other_Names', 'Family_Name', 'Email']
           attachments = ['metadata']
           metadata {
             template = 'templates/parties_people_metadata.json'
             name = 'metadata.json'
             mapping = [
-              'ID': ['ID'],
+              'id': ['ID'],
               'Given_Name': ['Given_Name'],
               'Other_Names': ['Other_Names'],
               'Family_Name': ['Family_Name'],
@@ -71,12 +71,12 @@ environments {
               'Description': ['Description']
             ]
             scripts = [
-              'ID': [scriptPath: 'scripts/dc_identifier.groovy']
+              'id': [scriptPath: 'scripts/dc_identifier.groovy']
             ]
           }
         }
         Activities {
-          idColumn = 'ID'
+          idColumn = 'id'
           idSearchField = 'ID'
           fieldValidation = ['Title', 'Name', 'Existence_Start', 'Existence_End']
           attachments = ['metadata']
@@ -99,7 +99,7 @@ environments {
               "ANZSRC_FOR_3": ["ANZSRC_FOR_3"]
             ]
             scripts = [
-              'ID': [scriptPath: 'scripts/dc_identifier.groovy']
+              'id': [scriptPath: 'scripts/dc_identifier.groovy']
             ]
           }
         }
