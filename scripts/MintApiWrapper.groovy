@@ -94,7 +94,8 @@ class MintApiWrapper {
           log.error "Some attachments failed, skipping record..."
           return false
         }
-        transform(existingOid, packageType)
+        def transForm = transform(existingOid, packageType)
+        transForm.body().close()
         return true
       }
     } catch (Exception e) {
