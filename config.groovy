@@ -4,6 +4,7 @@ environments {
     //--------------------------------------------------------------------------------------------------------
     production {
       version = '1.0'
+      host = 'localhost'
       port = 8089
       baseDir = new File(System.getProperty('redboxApiConfig')).getParent() + '/'
       apiWrapper = "scripts/MintApiWrapper.groovy"
@@ -17,14 +18,14 @@ environments {
         Parties_Groups {
           idColumn = 'id' // value used for searching
           idSearchField = 'ID' // the Solr field search query
-          fieldValidation = ['id', 'Name', 'Phone'] // used to validate if the record is valid for this package type, all attributes must exist 
+          fieldValidation = ['id', 'Name', 'Phone'] // used to validate if the record is valid for this package type, all attributes must exist
           attachments = ['metadata'] // attachments created for each record
           metadata {
             template = 'templates/parties_groups_metadata.json'
             name = 'metadata.json'
             mapping = [
               'id':['ID'],
-              'Name':['Name'], 
+              'Name':['Name'],
               'Description':['Description'],
               'Email':['Email'],
               'Phone':['Phone'],
@@ -36,7 +37,7 @@ environments {
             scripts = [
               'id': [scriptPath: 'scripts/dc_identifier.groovy']
             ]
-          }       
+          }
         }
         Parties_People {
           idColumn = 'id'
@@ -116,7 +117,7 @@ environments {
         actions {
           create = "create.script"
           attach = "attach.script"
-          transform = "transform.script"  
+          transform = "transform.script"
           ping = "info.script"
           find = "find.script"
         }

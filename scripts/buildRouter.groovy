@@ -1,5 +1,5 @@
 /**
-* Creates the Uploaders's  Camel REST routes using DSL. 
+* Creates the Uploaders's  Camel REST routes using DSL.
 *
 * Author: <a href='https://github.com/shilob'>Shilo Banihit</a>
 */
@@ -9,7 +9,7 @@ import org.apache.camel.processor.interceptor.*
 import org.apache.camel.*
 import org.apache.camel.model.dataformat.*
 import au.com.redboxresearchdata.harvester.redbox.util.*
-  
+
 // CSV Config
 CsvDataFormat csv = new CsvDataFormat()
 csv.skipHeaderRecord = true;
@@ -25,7 +25,7 @@ apiWrapper.log = log
 // REST Component config
 routeBuilder.restConfiguration()
 .component("netty4-http")
-.host("localhost")
+.host(config.host)
 .port(config.port)
 .bindingMode(RestBindingMode.off)
 .componentProperty('traceEnabled', config.logging.trace.toString())
